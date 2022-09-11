@@ -1,0 +1,26 @@
+-- Prerequoisites: make, docker
+
+-- Create folder (Linux machine): 
+
+1.  mkdir -p reach/tut && cd reach/tut
+
+-- download reach
+ 
+2. curl https://docs.reach.sh/reach -o reach
+
+-- change reach permission (execute command)
+
+3. chmod +x reach
+
+-- check reach
+
+4. ./reach --version; ./reach update 
+
+-- compile reach
+
+5. /reach compile
+
+ 
+ -- run reach
+
+6. ./reach run
