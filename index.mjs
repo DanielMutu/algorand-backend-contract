@@ -23,7 +23,9 @@ const stdlib = loadStdlib(process.env);
         },
 
         getProject: () => {
-            console.log(`This contract have 1000 Credits in total`);            
+            const currentCredits = 1000;
+            console.log(`This contract have 1000 Credits in total`);
+            return currentCredits;            
         }
     })
 
