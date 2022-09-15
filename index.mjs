@@ -5,15 +5,17 @@ const stdlib = loadStdlib(process.env);
 
 (async () => {
     //default starting balance
-    const startingBalance = stdlib.parseCurrency(10);
+    const startingBalance = stdlib.parseCurrency(100);
 
     //keep in TeST account
     const accFundDonator = await stdlib.newTestAccount(startingBalance);
-    const accFundCreator = await stdlib.newTestAccount(startingBalance);
+    const accFundProject = await stdlib.newTestAccount(stdlib.parseCurrency(10));
     
     //create contract for all partecipats
     const ctcFundDonator = accFundDonator.contract(backend);
-    const ctcFundCreator = accFundCreator.contract(backend, ctcFundDonator.getInfo());
+    const ctcFundProject = accFundProject.contract(backend, ctcFundDonator.getInfo());
+
+    const ftm = (x) => stdlib.formatCurrency(x,4);
 
     const Project = (Who) => ({
         putCredits:() => {
@@ -30,12 +32,16 @@ const stdlib = loadStdlib(process.env);
     })
 
     await Promise.all([
-            backend.NameFundDonator(ctcFundDonator, {
+            backend.FundDonator(ctcFundDonator, {
                 ...Project('FundDonator'),
+                wager: stdlib.parseCurrency(10),
             }),
 
-            backend.NameFundCreator(ctcFundCreator, {
-                ...Project('FundCreator'),
+            backend.FundProject(ctcFundProject, {
+                ...Project('FundProject'),
+                accectWager: (atm) => {
+                    console.log(`Fund Project accept ${ftm(atm)}`);
+                }
             })
         ]);
 
