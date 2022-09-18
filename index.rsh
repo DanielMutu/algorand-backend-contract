@@ -1,63 +1,34 @@
 'reach 0.1';
+'use strict';
 
-const Project = {
-    putCredits: Fun([], UInt),
-    getProject: Fun([], UInt),
-}
+export const main = Reach.App(() => {
+  const A = Participant('Alice', {
+    request: UInt,
+    info: Bytes(128),
+  });
+  const B = Participant('Bob', {
+    want: Fun([UInt], Null),
+    got: Fun([Bytes(128)], Null),
+  });
+  init();
 
+  A.only(() => {
+    const request = declassify(interact.request); });
+  A.publish(request);
+  commit();
 
-export const main = Reach.App(()=>{
+  B.only(() => {
+    interact.want(request); });
+  B.pay(request);
+  commit();
 
-    //who make a donation
-    const FundDonator = Participant('FundDonator', {
-        ...Project,
-        wager: UInt,
-    });
+  A.only(() => {
+    const info = declassify(interact.info); });
+  A.publish(info);
+  transfer(request).to(A);
+  commit();
 
-    //who create a new Project
-    const FundCreator = Participant('FundCreator',{
-        ...Project, //share methods from contract
-        wager: UInt,
-    });
-
-    const FundProject = Participant('FundProject',{
-        ...Project, //share methods from contract
-        acceptWager: Fun([UInt], Null),
-        wager: UInt,
-    });
-
-    init();
-
-
-
-    FundDonator.only(() => {
-        const wager = declassify(interact.wager);
-        const handFundDonator = declassify(interact.putCredits());
-    });
-    FundDonator.publish(wager, handFundDonator)
-    .pay(wager);
-    //FundDonator.publish(handFundDonator);
-    commit();
-
-
-    FundProject.only(() => {
-        //interact.acceptWager(interact.wager);
-        const getProjectFund = declassify(interact.getProject());
-    });
-    FundProject.publish(getProjectFund)
-
-    commit();
-
-    FundCreator.only(() => {
-        const getProjectCredits = declassify(interact.getProject());
-    });
-    FundCreator.publish(getProjectCredits);
-    const forCreator = 1;
-    //transfer(wager).to(FundProject);
-
-
-    commit();
-
-
-
+  B.only(() => {
+    interact.got(info); });
+  exit();
 });
