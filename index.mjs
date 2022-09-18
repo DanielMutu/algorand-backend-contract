@@ -1,42 +1,21 @@
 import { loadStdlib } from '@reach-sh/stdlib';
 import * as backend from './build/index.main.mjs';
 
-const stdlib = loadStdlib(process.env);
+const stdlib = loadStdlib();
 
-(async () => {
-    //default starting balance
-    const startingBalance = stdlib.parseCurrency(10);
+const accAlice = await stdlib.newTestAccount(stdlib.parseCurrency(100));
+const accBob = await stdlib.newTestAccount(stdlib.parseCurrency(100));
 
-    //keep in TeST account
-    const accFundDonator = await stdlib.newTestAccount(startingBalance);
-    const accFundCreator = await stdlib.newTestAccount(startingBalance);
-    
-    //create contract for all partecipats
-    const ctcFundDonator = accFundDonator.contract(backend);
-    const ctcFundCreator = accFundCreator.contract(backend, ctcFundDonator.getInfo());
+const ctcAlice = accAlice.contract(backend);
+const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
 
-    const Project = (Who) => ({
-        putCredits:() => {
-            const currentCredits = 1000; //Fixed values for DEMO
-            console.log(`${Who} Put ${currentCredits} in Project`);
-            return currentCredits;
-        },
-
-        getProject: () => {
-            const currentCredits = 1000;
-            console.log(`This contract have 1000 Credits in total`);
-            return currentCredits;            
-        }
-    })
-
-    await Promise.all([
-            backend.NameFundDonator(ctcFundDonator, {
-                ...Project('FundDonator'),
-            }),
-
-            backend.NameFundCreator(ctcFundCreator, {
-                ...Project('FundCreator'),
-            })
-        ]);
-
-})();
+await Promise.all([
+  ctcAlice.participants.Alice({
+    request: stdlib.parseCurrency(5),
+    info: 'If you wear these, you can see beyond evil illusions.'
+  }),
+  ctcBob.p.Bob({
+    want: (amt) => console.log(`Alice asked Bob for ${stdlib.formatCurrency(amt)}`),
+    got: (secret) => console.log(`Alice's secret is: ${secret}`),
+  }),
+]);
