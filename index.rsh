@@ -5,6 +5,8 @@ export const main = Reach.App(() => {
   const ProjectFunded = Participant('ProjectFunded', {
     request: UInt,
     info: Bytes(128),
+    startDate:  Bytes(128),
+    endDate: Bytes(128)
   });
   const Funder = Participant('Funder', {
     want: Fun([UInt], Null),

@@ -12,7 +12,9 @@ const ctcFunder = accFunder.contract(backend, ctcProjectFunded.getInfo());
 await Promise.all([
   ctcProjectFunded.participants.ProjectFunded({
     request: stdlib.parseCurrency(5),
-    info: 'Info about the project'
+    info: 'Info about the project',
+    startDate: 'yyyymmdd h24:mi:ss',
+    endDate: 'yyyymmdd h24:mi:ss'
   }),
   ctcFunder.p.Funder({
     want: (amt) => console.log(`ProjectFunded asked Funder for ${stdlib.formatCurrency(amt)}`),
