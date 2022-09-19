@@ -2,33 +2,33 @@
 'use strict';
 
 export const main = Reach.App(() => {
-  const A = Participant('Alice', {
+  const ProjectFunded = Participant('ProjectFunded', {
     request: UInt,
     info: Bytes(128),
   });
-  const B = Participant('Bob', {
+  const Funder = Participant('Funder', {
     want: Fun([UInt], Null),
     got: Fun([Bytes(128)], Null),
   });
   init();
 
-  A.only(() => {
+  ProjectFunded.only(() => {
     const request = declassify(interact.request); });
-  A.publish(request);
+  ProjectFunded.publish(request);
   commit();
 
-  B.only(() => {
+  Funder.only(() => {
     interact.want(request); });
-  B.pay(request);
+  Funder.pay(request);
   commit();
 
-  A.only(() => {
+  ProjectFunded.only(() => {
     const info = declassify(interact.info); });
-  A.publish(info);
-  transfer(request).to(A);
+  ProjectFunded.publish(info);
+  transfer(request).to(ProjectFunded);
   commit();
 
-  B.only(() => {
+  Funder.only(() => {
     interact.got(info); });
   exit();
 });
